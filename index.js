@@ -7,9 +7,10 @@ async function sendWhatsAppMessage(phoneNumber, message) {
     options.addArguments('disable-gpu');
     options.addArguments('no-sandbox');  // Required by Heroku for headless
 
-    let driver = await new Builder().forBrowser('chrome').setChromeOptions(options).build();
-
+    let driver;
     try {
+        driver = await new Builder().forBrowser('chrome').setChromeOptions(options).build();
+
         // Open WhatsApp Web using the wa.me URL
         const encodedMessage = encodeURIComponent(message);
         const whatsappURL = `https://wa.me/${phoneNumber}?text=${encodedMessage}`;
@@ -23,9 +24,13 @@ async function sendWhatsAppMessage(phoneNumber, message) {
         await driver.findElement(By.css('div[title="Send"]')).click();
 
         console.log(`Message sent to ${phoneNumber}`);
+    } catch (error) {
+        console.error('Error during WhatsApp message automation:', error);
     } finally {
-        // Close the browser
-        await driver.quit();
+        // Ensure the browser is properly closed in case of errors
+        if (driver) {
+            await driver.quit();
+        }
     }
 }
 
