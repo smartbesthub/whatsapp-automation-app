@@ -1,4 +1,4 @@
-const { Builder, By } = require('selenium-webdriver');
+const { Builder, By, until } = require('selenium-webdriver');  // <-- add 'until'
 const chrome = require('selenium-webdriver/chrome');
 
 async function sendWhatsAppMessage(phoneNumber, message) {
