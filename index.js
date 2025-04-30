@@ -12,6 +12,7 @@ async function sendWhatsAppMessage(phoneNumber, message) {
 
     let driver;
     try {
+        console.log("Starting Chrome Driver...");
         // Start the Chrome WebDriver with given options
         driver = await new Builder().forBrowser('chrome').setChromeOptions(options).build();
 
@@ -19,19 +20,26 @@ async function sendWhatsAppMessage(phoneNumber, message) {
         const encodedMessage = encodeURIComponent(message);
         const whatsappURL = `https://wa.me/${phoneNumber}?text=${encodedMessage}`;
         
+        console.log("Opening WhatsApp Web...");
         // Open WhatsApp Web
         await driver.get(whatsappURL); 
 
-        // Wait for QR code to be located and send button to be ready
+        // Wait for the QR code or page to load (increase wait time if needed)
+        console.log("Waiting for QR code...");
         await driver.wait(until.elementLocated(By.css('div[data-testid="qr-code"]')), 60000);  // Wait for QR code
-        await driver.wait(until.elementLocated(By.css('span[data-icon="send"]')), 60000);  // Wait for send button
+        console.log("QR code found!");
 
-        // Capture a screenshot of the browser for debugging purposes
+        console.log("Waiting for Send button...");
+        await driver.wait(until.elementLocated(By.css('span[data-icon="send"]')), 60000);  // Wait for send button
+        console.log("Send button found!");
+
+        // Capture a screenshot on timeout or error for debugging
         await driver.takeScreenshot().then(function(data) {
             fs.writeFileSync('screenshot.png', data, 'base64');
         });
 
-        // Click the send button after waiting
+        // Try clicking the send button
+        console.log("Clicking send button...");
         await driver.findElement(By.css('span[data-icon="send"]')).click();
         
         console.log(`Message sent to ${phoneNumber}`);
