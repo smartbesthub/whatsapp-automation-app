@@ -18,7 +18,7 @@ async function sendWhatsAppMessage(phoneNumber, message) {
         await driver.get(whatsappURL);  // This will open WhatsApp Web with the message pre-filled
         
         // Wait for the page to load and for the send button to appear
-        await driver.wait(until.elementLocated(By.css('div[title="Send"]')), 10000);
+        await driver.wait(until.elementLocated(By.css('div[title="Send"]')), 20000);
 
         // Click the send button
         await driver.findElement(By.css('div[title="Send"]')).click();
